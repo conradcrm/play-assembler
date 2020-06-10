@@ -4,6 +4,7 @@
 #include<stdlib.h>
 #define N 4
 char warning[25]="No valido$";
+char choose[25]="Escoge una pila$";
 char empty[25]="Esta vacio$";
 char none[25]="             $";
 int num[5][N] = {{1, 2, 3, 1},{1, 2, 3, 3},{2, 3, 1, 2},{0, 0, 0, 0},{0, 0, 0, 0}};
@@ -18,6 +19,7 @@ char row=0;
 int count=0;
 int ext=0;
 int number=0;
+int other=0;
 void ventana(char a,char b,char a1,char b1, char c){
 	asm{
 		mov ax,0600h
@@ -113,7 +115,6 @@ void compare(char a,char b,char a1,char b1,int number){
 void select(){
 	int fla= 0;
 	for (int i = 0; i <N; i++){
-		posicionar_cursor(3,35);
 		int c = num[count-1][i];
 		if(c!=0 && fla==0){
 			number=c;
@@ -130,21 +131,20 @@ void select(){
 }
 
 void insert(int comp){
-	//printf("(%i,%i,%i)\n",ext,count-1,number);
-	int fla= 0;
-	if(comp!=count-1){
-		
-			int nu= num[count-1][3];
-			if(nu==0 && fla==0){
-				num[count-1][3]=number;
-				fla= 1;
-				posicionar_cursor(0,30);
-				printText(none);
-			}
-		
+	posicionar_cursor(0,30);
+	printf("%d\n",count-1);
+	num[comp][ext] = 0;
+	int fla=0;
+	int i=0;
+	for (i = N-1; i >=0; i--){
+		int n = num[count-1][i];
+		if(n==0 && fla==0){
+			num[count-1][i]=number;
+			fla=1;
+		}
 	}
 	if(fla==0){
-		num[count-1][ext] = number;
+		num[comp][ext] = number;
 		posicionar_cursor(0,30);
 		printText(warning);
 	}
@@ -206,16 +206,22 @@ void estado_mouse(){
 			mov fila,al
 		}
 		if(estado==1){
+			other=1;
 			clic();
 			select();
 		}
 
 		if (estado==2){
-			num[count-1][ext] = 0;
-			int comp= count-1;
-			clic();
-			//insert(comp);
-			load();
+			if(other==1){
+				
+				int comp= count-1;
+				clic();
+				insert(comp);
+				load();
+				other=2;
+			}
+			posicionar_cursor(0,30);
+			printText(choose);
 		}
 		delay(75);
 	}
