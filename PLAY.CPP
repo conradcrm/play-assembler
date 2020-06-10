@@ -132,18 +132,33 @@ void select(){
 }
 
 void insert(int comp){
-	posicionar_cursor(0,30);
-	printf("%d\n",count-1);
-	num[comp][ext] = 0;
 	int fla=0;
 	int i=0;
-	for (i = N-1; i >=0; i--){
+	int aux2=0;
+	num[comp][ext] = 0;
+	if(num[count-1][N-1]!=0){
+		for (int k = 0; k < N; k++){	
+			int m = num[count-1][k];
+			if(m!=0 && fla==0){		
+				if(m==number){
+					aux2=1;
+				}
+				fla=1;
+			}
+		}
+		fla=0;
+	}
+
+	if (aux2==1 || num[count-1][N-1]==0){
+		for (i = N-1; i >=0; i--){
 		int n = num[count-1][i];
-		if(n==0 && fla==0){
-			num[count-1][i]=number;
-			fla=1;
+			if(n==0 && fla==0){
+				num[count-1][i]=number;
+				fla=1;
+			}
 		}
 	}
+
 	if(fla==0){
 		num[comp][ext] = number;
 		posicionar_cursor(0,30);
@@ -202,8 +217,8 @@ void qwin(){
 	}
 	if(win==5){
 		posicionar_cursor(2,30);
-		printf("%d\n",winn);
-		load(44);
+		printText(winn);
+		load(47);
 	}
 }
 void estado_mouse(){
@@ -245,7 +260,6 @@ void estado_mouse(){
 			printText(choose);
 			qwin();
 		}
-		
 		delay(75);
 	}
 }
