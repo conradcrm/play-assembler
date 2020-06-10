@@ -3,7 +3,7 @@
 #include<conio.h>
 #include<stdlib.h>
 #define N 4
-int num[5][N] = {{4, 2, 2, 3},{2, 1, 1, 0},{1, 1, 0, 1},{0, 0, 0, 0},{0, 0, 0, 0}};
+int num[5][N] = {{4, 2, 2, 3},{0, 1, 1, 0},{1, 1, 0, 1},{0, 8, 0, 0},{0, 0, 3, 0}};
 int estado=0;
 char flag='t';
 int coorx=0;
@@ -13,7 +13,7 @@ char columna=0;
 char colmn=0;
 char row=0;
 int count=0;
-
+int ext=0;
 
 void ventana(char a,char b,char a1,char b1, char c){
 	asm{
@@ -108,35 +108,49 @@ void compare(char a,char b,char a1,char b1,int number){
 	}
 }
 
-void clic(){
+void clic(int stat){
 	flag='t';
-			int y=6;
-			int y1=18;
-			int x=10;
+			int y=5;
+			int y1=17;
+			int x=7;
 			
 			compare(y,x,y1,x+6,1);
 			if(count==1){
 				posicionar_cursor(0,35);
 				printf("(%i)\n",count);
 			}
-			x=x+15;
-			compare(y,x,y1,x+6,2);
+			compare(y,x+15,y1,22+6,2);
 			if(count==2){
 				posicionar_cursor(0,35);
 				printf("(%i)\n",count);
 			}
-			x=x+15;
-			compare(y,x,y1,x+6,3);
+			compare(y,x+30,y1,x+30+6,3);
 			if(count==3){
 				posicionar_cursor(0,35);
 				printf("(%i)\n",count);
 			}
-			x=x+15;
-			compare(y,x,y1,x+6,4);
+			compare(y,x+45,y1,x+45+6,4);
 			if(count==4){
 				posicionar_cursor(0,35);
 				printf("(%i)\n",count);
 			}
+			compare(y,x+60,y1,x+60+6,5);
+			if(count==5){
+				posicionar_cursor(0,35);
+				printf("(%i)\n",count);
+			}
+
+			int fla= 0;
+			for (int i = 0; i <N; i++){
+				posicionar_cursor(3,35);
+				int c = num[count-1][i];	
+				if(c!=0 && fla==0){
+					ext=c;
+					printf("(%i,%i,%i,%i)\n",c,count-1,i,stat);
+					fla= 1;
+				}	
+			}
+			
 }
 
 void estado_mouse(){
@@ -160,11 +174,11 @@ void estado_mouse(){
 			mov fila,al
 		}
 		if(estado==1){
-			clic();
+			clic(1);
 		}
 
 		if (estado==2){
-			clic();
+			clic(2);
 		}
 		delay(75);
 	}
@@ -180,8 +194,8 @@ void box(int x, int num[N][N],int count){
 			aux=i*3;
 			int c= 7+aux;
 			//ventana(c,11,c+1,15,23);
-			posicionar_cursor(c,x+2);
-			printf("(%d)\n", num[count][i]);
+			posicionar_cursor(c,x+3);
+			printf("%d\n", num[count][i]);
 	}
 }
 
