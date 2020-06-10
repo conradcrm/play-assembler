@@ -3,7 +3,10 @@
 #include<conio.h>
 #include<stdlib.h>
 #define N 4
-int num[5][N] = {{4, 2, 2, 3},{0, 1, 1, 0},{1, 1, 0, 1},{0, 8, 0, 0},{0, 0, 3, 0}};
+char warning[25]="No valido$";
+char empty[25]="Esta vacio$";
+char none[25]="             $";
+int num[5][N] = {{1, 2, 3, 1},{1, 2, 3, 3},{2, 3, 1, 2},{0, 0, 0, 0},{0, 0, 0, 0}};
 int estado=0;
 char flag='t';
 int coorx=0;
@@ -14,7 +17,7 @@ char colmn=0;
 char row=0;
 int count=0;
 int ext=0;
-
+int number=0;
 void ventana(char a,char b,char a1,char b1, char c){
 	asm{
 		mov ax,0600h
@@ -88,7 +91,6 @@ void limpiar(char a, char b,char a1, char b1){
 		mov bh,30h
 		mov cl,b
 		mov ch,a
-
 		mov dl,b1
 		mov dh,a1
 		int 10H
@@ -108,51 +110,81 @@ void compare(char a,char b,char a1,char b1,int number){
 	}
 }
 
-void clic(int stat){
+void select(){
+	int fla= 0;
+	for (int i = 0; i <N; i++){
+		posicionar_cursor(3,35);
+		int c = num[count-1][i];
+		if(c!=0 && fla==0){
+			number=c;
+			ext=i;
+			fla= 1;
+			posicionar_cursor(0,30);
+			printText(none);
+		}
+	}
+	if(fla==0){
+		posicionar_cursor(0,30);
+		printText(empty);
+	}
+}
+
+void insert(int comp){
+	//printf("(%i,%i,%i)\n",ext,count-1,number);
+	int fla= 0;
+	if(comp!=count-1){
+		
+			int nu= num[count-1][3];
+			if(nu==0 && fla==0){
+				num[count-1][3]=number;
+				fla= 1;
+				posicionar_cursor(0,30);
+				printText(none);
+			}
+		
+	}
+	if(fla==0){
+		num[count-1][ext] = number;
+		posicionar_cursor(0,30);
+		printText(warning);
+	}
+}
+
+void clic(){
 	flag='t';
 			int y=5;
 			int y1=17;
 			int x=7;
 			
 			compare(y,x,y1,x+6,1);
-			if(count==1){
-				posicionar_cursor(0,35);
-				printf("(%i)\n",count);
-			}
 			compare(y,x+15,y1,22+6,2);
-			if(count==2){
-				posicionar_cursor(0,35);
-				printf("(%i)\n",count);
-			}
 			compare(y,x+30,y1,x+30+6,3);
-			if(count==3){
-				posicionar_cursor(0,35);
-				printf("(%i)\n",count);
-			}
 			compare(y,x+45,y1,x+45+6,4);
-			if(count==4){
-				posicionar_cursor(0,35);
-				printf("(%i)\n",count);
-			}
 			compare(y,x+60,y1,x+60+6,5);
-			if(count==5){
-				posicionar_cursor(0,35);
-				printf("(%i)\n",count);
-			}
-
-			int fla= 0;
-			for (int i = 0; i <N; i++){
-				posicionar_cursor(3,35);
-				int c = num[count-1][i];	
-				if(c!=0 && fla==0){
-					ext=c;
-					printf("(%i,%i,%i,%i)\n",c,count-1,i,stat);
-					fla= 1;
-				}	
-			}
-			
 }
 
+void box(int x, int num[N][N],int count){
+	int i;
+	int j;
+	
+	for(i=0;i<N;i++){
+			int c= 7+i*3;
+			//ventana(c,11,c+1,15,10);
+			posicionar_cursor(c,x+3); 
+			printf("%d\n", num[count][i]); //imprime los numeros en la pila
+	}
+}
+
+void load(){
+	int y=5;
+	int y1=17;
+	int x=7;
+	for(int i=0;i<N+1;i++){
+			ventana(y,x,y1,x+6,33);
+			box(x,num,i);
+			x=x+15;
+	}
+}
 void estado_mouse(){
 	inicializa_mouse();
 	mostrar_mouse();
@@ -174,48 +206,24 @@ void estado_mouse(){
 			mov fila,al
 		}
 		if(estado==1){
-			clic(1);
+			clic();
+			select();
 		}
 
 		if (estado==2){
-			clic(2);
+			num[count-1][ext] = 0;
+			int comp= count-1;
+			clic();
+			//insert(comp);
+			load();
 		}
 		delay(75);
-	}
-}
-
-
-void box(int x, int num[N][N],int count){
-	int i;
-	int j;
-	int aux=0;
-	
-	for(i=0;i<N;i++){
-			aux=i*3;
-			int c= 7+aux;
-			//ventana(c,11,c+1,15,23);
-			posicionar_cursor(c,x+3);
-			printf("%d\n", num[count][i]);
-	}
-}
-
-void load(){
-	int y=5;
-	int y1=17;
-	int x=7;
-	int i=0;
-	
-	for(i=0;i<N+1;i++){
-			ventana(y,x,y1,x+6,33);
-			box(x,num,i);
-			x=x+15;
 	}
 }
 
 int main(){
 	cls();
 	load();
-	//random();
 	estado_mouse();
 	system("pause");
 	return 0;
