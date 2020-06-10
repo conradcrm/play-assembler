@@ -3,12 +3,12 @@
 #include<conio.h>
 #include<stdlib.h>
 #define N 4
+char none[25]="                $";
 char warning[25]="No valido$";
 char choose[25]="Escoge una pila$";
 char empty[25]="Esta vacio$";
+char movimientos[25]="Movientos : $";
 char winn[25]="HAS GANADO$";
-char none[25]="             $";
-int num[5][N] = {{1, 2, 3, 1},{1, 2, 3, 3},{2, 3, 1, 2},{0, 0, 0, 0},{0, 0, 0, 0}};
 int estado=0;
 char flag='t';
 int coorx=0;
@@ -21,6 +21,9 @@ int count=0;
 int ext=0;
 int number=0;
 int other=0;
+int moven=0;
+int num[5][N] = {{1, 2, 3, 1},{1, 2, 3, 3},{2, 3, 1, 2},{0, 0, 0, 0},{0, 0, 0, 0}};
+
 void ventana(char a,char b,char a1,char b1, char c){
 	asm{
 		mov ax,0600h
@@ -101,7 +104,6 @@ void limpiar(char a, char b,char a1, char b1){
 }
 
 void compare(char a,char b,char a1,char b1,int number){
-	flag='t';
 	if(fila>a-1&&fila<a1+1){
 		if(columna>b-1&&columna<b1+1){
 			//ventana(a,b,a1,b1,chang);
@@ -120,9 +122,12 @@ void select(){
 		if(c!=0 && fla==0){
 			number=c;
 			ext=i;
-			fla= 1;
+			asm{
+				mov fla,1
+			}
 			posicionar_cursor(0,30);
 			printText(none);
+
 		}
 	}
 	if(fla==0){
@@ -137,9 +142,9 @@ void insert(int comp){
 	int aux2=0;
 	num[comp][ext] = 0;
 	if(num[count-1][N-1]!=0){
-		for (int k = 0; k < N; k++){	
+		for (int k = 0; k < N; k++){
 			int m = num[count-1][k];
-			if(m!=0 && fla==0){		
+			if(m!=0 && fla==0){
 				if(m==number){
 					aux2=1;
 				}
@@ -155,6 +160,12 @@ void insert(int comp){
 			if(n==0 && fla==0){
 				num[count-1][i]=number;
 				fla=1;
+				ventana(2,63,2,78,26);
+				posicionar_cursor(2,65);
+				printText(movimientos);
+				posicionar_cursor(2,76);
+				moven++;
+				printf("%d\n",moven);
 			}
 		}
 	}
@@ -167,11 +178,10 @@ void insert(int comp){
 }
 
 void clic(){
-	flag='t';
 			int y=5;
 			int y1=17;
 			int x=7;
-			
+
 			compare(y,x,y1,x+6,1);
 			compare(y,x+15,y1,22+6,2);
 			compare(y,x+30,y1,x+30+6,3);
@@ -182,12 +192,11 @@ void clic(){
 void box(int x, int num[N][N],int count){
 	int i;
 	int j;
-	
 	for(i=0;i<N;i++){
 			int c= 7+i*3;
 			//ventana(c,11,c+1,15,10);
-			posicionar_cursor(c,x+3); 
-			printf("%d\n", num[count][i]); //imprime los numeros en la pila
+			posicionar_cursor(c,x+3);
+			printf("%d\n", num[count][i]);
 	}
 }
 
@@ -209,15 +218,19 @@ void qwin(){
 		suma=0;
 		int a = num[i][0];
 		for (int j = 0; j < N; j++){
-			suma+=num[i][j];		
+			suma+=num[i][j];
 		}
 		if(suma==a*N){
-			win++;
+			asm{
+				inc win
+			}
 		}
 	}
 	if(win==5){
 		posicionar_cursor(2,30);
 		printText(winn);
+		posicionar_cursor(0,30);
+		printText(none);
 		load(47);
 	}
 }
@@ -249,11 +262,10 @@ void estado_mouse(){
 
 		if (estado==2){
 			if(other==1){
-				
 				int comp= count-1;
 				clic();
 				insert(comp);
-				load(33);
+				load(32);
 				other=2;
 			}
 			posicionar_cursor(0,30);
@@ -266,7 +278,7 @@ void estado_mouse(){
 
 int main(){
 	cls();
-	load(33);
+	load(32);
 	estado_mouse();
 	system("pause");
 	return 0;
