@@ -2,16 +2,8 @@
 #include<dos.h>
 #include<conio.h>
 #include<stdlib.h>
-#define N 5
-char texto[20]="Clic me$";
-char clicizq[35]="Clic izquierdo dentro$";
-char clicder[35]="Clic derecho dentro$";
-char clicizqf[35]="Clic izquierdo fuera$";
-char clicderf[35]="Clic derecho fuera$";
-
-char sobre[20]="Sobre boton$";
-char fuera[20]="Fuera boton$";
-char test[6]= "hola";
+#define N 4
+int num[5][N] = {{4, 2, 2, 3},{2, 1, 1, 0},{1, 1, 0, 1},{0, 0, 0, 0},{0, 0, 0, 0}};
 int estado=0;
 char flag='t';
 int coorx=0;
@@ -22,10 +14,11 @@ char colmn=0;
 char row=0;
 int count=0;
 
-void ventana(char a,char b,char a1,char b1,char cr){
+
+void ventana(char a,char b,char a1,char b1, char c){
 	asm{
 		mov ax,0600h
-		add bh,cr
+		mov bh,c
 		mov ch,a
 		mov cl,b
 		mov dh,a1
@@ -66,8 +59,9 @@ void printText(char texto[]){
 			mov dl,letra
 			int 21h
 		}
-		j++;	
-	}}
+		j++;
+	}
+}
 
 void posicionar_cursor(char fila,char columna){
 	asm{
@@ -76,9 +70,8 @@ void posicionar_cursor(char fila,char columna){
 		mov dh,fila
 		mov dl,columna
 		int 10h
-	}}
-
-
+	}
+}
 
 void cls(){
 	asm{
@@ -91,7 +84,7 @@ void cls(){
 }
 void limpiar(char a, char b,char a1, char b1){
 	asm{
-		mov ax, 0600h
+		mov ax,0600h
 		mov bh,30h
 		mov cl,b
 		mov ch,a
@@ -99,22 +92,52 @@ void limpiar(char a, char b,char a1, char b1){
 		mov dl,b1
 		mov dh,a1
 		int 10H
-	}}
-
-void rets(char position[]){
-	limpiar(2,30,2,55);
-	posicionar_cursor(2,31);
-	printText(position);
-	posicionar_cursor(24,79);
+	}
 }
 
-void rets_a(char position[]){
-	limpiar(1,20,1,55);
-	posicionar_cursor(1,21);
-	printText(position);
-	posicionar_cursor(24,79);
+void compare(char a,char b,char a1,char b1,int number){
+	flag='t';
+	if(fila>a-1&&fila<a1+1){
+		if(columna>b-1&&columna<b1+1){
+			//ventana(a,b,a1,b1,chang);
+			count = number;
+		}
+	}
+	if(fila==0&&columna==79){
+		flag='f';
+	}
 }
 
+void clic(){
+	flag='t';
+			int y=6;
+			int y1=18;
+			int x=10;
+			
+			compare(y,x,y1,x+6,1);
+			if(count==1){
+				posicionar_cursor(0,35);
+				printf("(%i)\n",count);
+			}
+			x=x+15;
+			compare(y,x,y1,x+6,2);
+			if(count==2){
+				posicionar_cursor(0,35);
+				printf("(%i)\n",count);
+			}
+			x=x+15;
+			compare(y,x,y1,x+6,3);
+			if(count==3){
+				posicionar_cursor(0,35);
+				printf("(%i)\n",count);
+			}
+			x=x+15;
+			compare(y,x,y1,x+6,4);
+			if(count==4){
+				posicionar_cursor(0,35);
+				printf("(%i)\n",count);
+			}
+}
 
 void estado_mouse(){
 	inicializa_mouse();
@@ -136,112 +159,50 @@ void estado_mouse(){
 			div bl
 			mov fila,al
 		}
-
-		limpiar(0,35,0,45);
-		posicionar_cursor(0,79);
-		printf("X");
-		//posicionar_cursor(0,35);
-		//printf("(%i,%i)\n",fila,columna);
-
-		posicionar_cursor(24,79);
 		if(estado==1){
-				flag='t';
-				asm{
-					add count,12
-					dec fila
-					dec columna
-				}
-				ventana(fila, columna,fila+2, columna+2,count);
-				asm{
-					inc fila
-					inc columna
-				}
-
-				if(fila>9&&fila<13){
-					if(columna>24&&columna<36){
-
-					}
-					else{
-						limpiar(1,20,1,55);
-						posicionar_cursor(1,21);
-						printText(clicizqf);
-						posicionar_cursor(24,79);
-					}
-				}
-				else{
-					limpiar(1,20,1,55);
-					posicionar_cursor(1,21);
-					printText(clicizqf);
-					posicionar_cursor(24,79);
-				}
-				if(fila==0&&columna==79){
-					flag='f';
-				}
+			clic();
 		}
-
 
 		if (estado==2){
-			flag='t';
-			if(fila>9&&fila<13){
-				if(columna>24&&columna<36){
-					limpiar(1,20,1,55);
-					posicionar_cursor(1,21);
-					asm{
-						sub count,12
-					}
-					ventana(10,25,12,35,count);
-					printText(clicder);
-					posicionar_cursor(24,79);
-				}
-				else{
-					rets_a(clicderf);
-				}
-			}
-			else{
-				rets_a(clicderf);
-			}
-		}
-		if(fila>9&&fila<13){
-			if(columna>24&&columna<36){
-				rets(sobre);
-			}
-			else{
-				rets(fuera);
-			}
-		}
-		else{
-			rets(fuera);
+			clic();
 		}
 		delay(75);
 	}
-	
 }
 
 
-void random(){
+void box(int x, int num[N][N],int count){
+	int i;
+	int j;
+	int aux=0;
+	
+	for(i=0;i<N;i++){
+			aux=i*3;
+			int c= 7+aux;
+			//ventana(c,11,c+1,15,23);
+			posicionar_cursor(c,x+2);
+			printf("(%d)\n", num[count][i]);
+	}
+}
 
-	int num[N];
-    int i;
-
-    srand(time(NULL));
-
-   for(i=0;i<N;i++)
-   {
-       num[i]=rand()%4;
-   }	
-
-    for(i=0;i<N;i++)
-    {	
-		posicionar_cursor(i+5,79);
-        printf("%d ", num[i]);
-    }
+void load(){
+	int y=5;
+	int y1=17;
+	int x=7;
+	int i=0;
+	
+	for(i=0;i<N+1;i++){
+			ventana(y,x,y1,x+6,33);
+			box(x,num,i);
+			x=x+15;
+	}
 }
 
 int main(){
 	cls();
-	random();
+	load();
+	//random();
 	estado_mouse();
-	posicionar_cursor(23,0);
 	system("pause");
 	return 0;
 }

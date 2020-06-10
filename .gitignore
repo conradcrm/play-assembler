@@ -2,3 +2,5 @@ BGI/
 .vscode
 TC/
 DISCOS$/
+*.SWP
+*.BAK
