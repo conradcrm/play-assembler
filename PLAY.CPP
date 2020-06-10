@@ -227,17 +227,16 @@ void qwin(){
 		}
 	}
 	if(win==5){
-		posicionar_cursor(2,30);
-		printText(winn);
 		posicionar_cursor(0,30);
 		printText(none);
-		load(47);
+		printText(winn);
+		load(47);	
 	}
 }
 void estado_mouse(){
 	inicializa_mouse();
 	mostrar_mouse();
-
+	ventana(0,0,0,79,13);
 	while(flag!='f'){
 		asm{
 			mov ax,03h
@@ -254,7 +253,9 @@ void estado_mouse(){
 			div bl
 			mov fila,al
 		}
+		
 		if(estado==1){
+			
 			other=1;
 			clic();
 			select();
@@ -265,7 +266,7 @@ void estado_mouse(){
 				int comp= count-1;
 				clic();
 				insert(comp);
-				load(32);
+				load(31);
 				other=2;
 			}
 			posicionar_cursor(0,30);
@@ -278,7 +279,7 @@ void estado_mouse(){
 
 int main(){
 	cls();
-	load(32);
+	load(31);
 	estado_mouse();
 	system("pause");
 	return 0;
