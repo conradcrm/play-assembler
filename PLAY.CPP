@@ -6,6 +6,7 @@
 char warning[25]="No valido$";
 char choose[25]="Escoge una pila$";
 char empty[25]="Esta vacio$";
+char winn[25]="HAS GANADO$";
 char none[25]="             $";
 int num[5][N] = {{1, 2, 3, 1},{1, 2, 3, 3},{2, 3, 1, 2},{0, 0, 0, 0},{0, 0, 0, 0}};
 int estado=0;
@@ -175,14 +176,34 @@ void box(int x, int num[N][N],int count){
 	}
 }
 
-void load(){
+void load(int c){
 	int y=5;
 	int y1=17;
 	int x=7;
 	for(int i=0;i<N+1;i++){
-			ventana(y,x,y1,x+6,33);
+			ventana(y,x,y1,x+6,c);
 			box(x,num,i);
 			x=x+15;
+	}
+}
+
+void qwin(){
+	int suma;
+	int win=0;
+	for (int i = 0; i < N+1; i++){
+		suma=0;
+		int a = num[i][0];
+		for (int j = 0; j < N; j++){
+			suma+=num[i][j];		
+		}
+		if(suma==a*N){
+			win++;
+		}
+	}
+	if(win==5){
+		posicionar_cursor(2,30);
+		printf("%d\n",winn);
+		load(44);
 	}
 }
 void estado_mouse(){
@@ -217,19 +238,21 @@ void estado_mouse(){
 				int comp= count-1;
 				clic();
 				insert(comp);
-				load();
+				load(33);
 				other=2;
 			}
 			posicionar_cursor(0,30);
 			printText(choose);
+			qwin();
 		}
+		
 		delay(75);
 	}
 }
 
 int main(){
 	cls();
-	load();
+	load(33);
 	estado_mouse();
 	system("pause");
 	return 0;
